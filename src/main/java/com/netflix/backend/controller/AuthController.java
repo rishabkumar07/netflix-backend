@@ -14,12 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Thin controller — validates input via @Valid, delegates to AuthService, returns DTO.
- * Never touches the DB directly, never contains business logic.
- *
- * .NET equivalent: an [ApiController] with [Route("api/auth")] in ASP.NET Core.
- */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor

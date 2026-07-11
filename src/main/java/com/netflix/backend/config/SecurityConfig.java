@@ -18,9 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 /**
  * Spring Security 6 config — replaces the old WebSecurityConfigurerAdapter extend pattern.
  *
- * .NET equivalent: builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
- *                          .AddJwtBearer(...) in Program.cs, plus app.UseAuthentication().
- *
  * Key decisions:
  *  - CSRF disabled: we're stateless (JWT), no browser sessions, no cookies → CSRF irrelevant
  *  - STATELESS session: no HttpSession created, every request re-authenticated via JWT

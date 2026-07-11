@@ -15,16 +15,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-/**
- * Runs once per request. Reads the Authorization header, validates the JWT,
- * and populates Spring's SecurityContext so downstream code knows who made the request.
- *
- * .NET equivalent: a custom middleware in ASP.NET Core's pipeline that calls
- * HttpContext.User = new ClaimsPrincipal(...) after validating a JWT.
- *
- * OncePerRequestFilter guarantees this runs exactly once even if the request is
- * forwarded internally (e.g. Spring error dispatches).
- */
 @Component
 @RequiredArgsConstructor
 @Slf4j

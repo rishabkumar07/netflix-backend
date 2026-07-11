@@ -15,12 +15,6 @@ import java.util.Map;
 /**
  * Centralised error handling — catches exceptions thrown anywhere in the service/controller layer
  * and converts them to consistent JSON error responses.
- *
- * .NET equivalent: a global exception filter registered via
- *   builder.Services.AddControllers(o => o.Filters.Add<MyExceptionFilter>())
- * or Problem Details middleware in .NET 7+.
- *
- * @RestControllerAdvice = @ControllerAdvice + @ResponseBody
  */
 @RestControllerAdvice
 @Slf4j

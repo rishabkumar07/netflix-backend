@@ -13,14 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Business logic for auth. Controllers stay thin — they validate input and delegate here.
- *
- * Interview angle: why is @Transactional on the service, not the controller?
- * → Transactions should wrap business units of work. A controller can call multiple service
- *   methods; each should manage its own transaction boundary. Putting it on the controller
- *   would create one giant transaction spanning unrelated DB calls.
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j

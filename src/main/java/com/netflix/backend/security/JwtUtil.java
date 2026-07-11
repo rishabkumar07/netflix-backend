@@ -12,12 +12,6 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-/**
- * JWT utility — wraps JJWT 0.12.x API.
- *
- * .NET equivalent: a static helper that calls System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler
- * Spring equivalent: there is no built-in token util, so we build one as a @Component.
- */
 @Component
 @Slf4j
 public class JwtUtil {
