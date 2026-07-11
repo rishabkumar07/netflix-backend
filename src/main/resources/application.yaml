@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: netflix-backend
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/netflix_db
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        # MySQLDialect is auto-detected from the driver — explicit config just adds a harmless warning
+
+server:
+  port: 9090
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: 86400000  # 24 hours in ms
+
+  # Phase 2 — TMDB movie seeding (daily export, not live API)
+  tmdb:
+    api-key: YOUR_TMDB_API_KEY_HERE
+    export-url: https://files.tmdb.org/p/exports
+
+  # Phase 5 — Groq / Spring AI
+  groq:
+    api-key: YOUR_GROQ_API_KEY_HERE
+    base-url: https://api.groq.com/openai
+
+  # Phase 2 fallback — OMDb live search (1000 req/day free, works on Jio)
+  omdb:
+    api-key: YOUR_OMDB_API_KEY_HERE
