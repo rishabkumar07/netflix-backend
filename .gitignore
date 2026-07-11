@@ -42,3 +42,6 @@ Thumbs.db
 ### Logs ###
 *.log
 logs/
+
+### Seed data ###
+src/main/resources/seed-movies.json
