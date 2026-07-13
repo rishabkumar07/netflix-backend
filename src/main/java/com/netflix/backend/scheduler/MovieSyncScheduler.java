@@ -14,6 +14,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,7 @@ public class MovieSyncScheduler {
 
     private final MovieRepository movieRepository;
     private final ObjectMapper objectMapper;
+    private final RestTemplate restTemplate;
 
     @Value("${app.tmdb.api-key}")
     private String tmdbApiKey;
@@ -49,10 +51,10 @@ public class MovieSyncScheduler {
 
     @Scheduled(cron = "0 0 2 1 * *")  // 2am on the 1st of every month
     @Transactional
+    @CacheEvict(value = {"movies-by-category", "movies-by-id"}, allEntries = true)
     public void syncMovies() {
         log.info("Starting monthly movie sync...");
 
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(tmdbApiKey);
         HttpEntity<Void> request = new HttpEntity<>(headers);

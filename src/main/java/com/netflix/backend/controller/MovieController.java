@@ -1,6 +1,7 @@
 package com.netflix.backend.controller;
 
 import com.netflix.backend.dto.response.MovieDTO;
+import com.netflix.backend.service.ImageProxyService;
 import com.netflix.backend.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import java.util.List;
 public class MovieController {
 
     private final MovieService movieService;
+    private final ImageProxyService imageProxyService;
 
     @GetMapping("/now-playing")
     public ResponseEntity<List<MovieDTO>> getNowPlaying() {
@@ -40,5 +42,10 @@ public class MovieController {
     @GetMapping("/{id}")
     public ResponseEntity<MovieDTO> getById(@PathVariable Integer id) {
         return ResponseEntity.ok(movieService.getById(id));
+    }
+
+    @GetMapping("/image")
+    public ResponseEntity<byte[]> getImage(@RequestParam String path) {
+        return imageProxyService.fetchImage(path);
     }
 }
