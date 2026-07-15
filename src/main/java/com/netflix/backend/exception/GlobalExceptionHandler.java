@@ -1,6 +1,8 @@
 package com.netflix.backend.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.retry.NonTransientAiException;
+import org.springframework.ai.retry.TransientAiException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +60,14 @@ public class GlobalExceptionHandler {
         log.warn("Data integrity violation: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Map.of("error", "This item already exists"));
+    }
+
+    /** Groq/Spring AI call failed (auth error, retries exhausted, network issue) → 503 Service Unavailable */
+    @ExceptionHandler({NonTransientAiException.class, TransientAiException.class})
+    public ResponseEntity<Map<String, String>> handleAiFailure(RuntimeException ex) {
+        log.error("AI provider call failed", ex);
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(Map.of("error", "AI suggestions are temporarily unavailable. Please try again shortly."));
     }
 
     /** Catch-all → 500 (logged server-side, generic message to client) */

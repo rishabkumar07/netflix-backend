@@ -17,6 +17,15 @@ spring:
         format_sql: true
         # MySQLDialect is auto-detected from the driver
 
+  ai:
+    openai:
+      api-key: ${GROQ_API_KEY}
+      base-url: https://api.groq.com/openai
+      chat:
+        options:
+          model: openai/gpt-oss-120b
+          temperature: 0.7
+
 server:
   port: 9090
 
@@ -29,8 +38,3 @@ app:
     api-key: ${TMDB_API_KEY}
     base-url: https://api.themoviedb.org/3
     image-base-url: https://image.tmdb.org/t/p
-
-  # Phase 5 — Groq / Spring AI
-  groq:
-    api-key: YOUR_GROQ_API_KEY_HERE
-    base-url: https://api.groq.com/openai
