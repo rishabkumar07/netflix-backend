@@ -5,7 +5,6 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Builder
@@ -23,5 +22,5 @@ public class MovieDTO {
     private Integer voteCount;
     private BigDecimal popularity;
     private List<Integer> genreIds;
-    private Set<String> categories;
+    private String trailerKey;
 }

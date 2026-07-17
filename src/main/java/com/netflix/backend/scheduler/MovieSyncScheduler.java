@@ -73,7 +73,10 @@ public class MovieSyncScheduler {
             }
         }
 
-        log.info("Sync fetched {} unique movies. Saving to DB...", movieMap.size());
+        log.info("Sync fetched {} unique movies. Fetching trailer keys...", movieMap.size());
+        fetchTrailerKeys(request, movieMap);
+
+        log.info("Saving to DB...");
 
         for (String category : CATEGORY_ENDPOINTS.keySet()) {
             movieRepository.deleteCategoryAssociations(category);
@@ -99,6 +102,31 @@ public class MovieSyncScheduler {
 
                 Movie movie = movieMap.computeIfAbsent(entry.getId(), id -> toEntity(entry));
                 movie.getCategories().add(category);
+            }
+        }
+    }
+
+    /**
+     * One extra TMDB call per unique movie. Unlike fetchCategory(), a failure here is
+     * NOT fatal to the whole sync — one movie missing its trailer is an isolated problem,
+     * not a sign TMDB itself is unreachable.
+     */
+    private void fetchTrailerKeys(HttpEntity<Void> request, Map<Integer, Movie> movieMap) {
+        for (Movie movie : movieMap.values()) {
+            try {
+                String url = tmdbBaseUrl + "/movie/" + movie.getId() + "/videos";
+                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
+
+                JsonNode results = objectMapper.readTree(response.getBody()).get("results");
+                for (JsonNode video : results) {
+                    if ("Trailer".equals(video.path("type").asText())) {
+                        movie.setTrailerKey(video.path("key").asText());
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                log.debug("No trailer found for movie {}: {}", movie.getId(), e.getMessage());
+                // leave trailerKey null — one movie's missing trailer doesn't abort the sync
             }
         }
     }

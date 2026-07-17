@@ -47,7 +47,7 @@ public class MovieService {
                 .voteCount(movie.getVoteCount())
                 .popularity(movie.getPopularity())
                 .genreIds(movie.getGenreIds())
-                .categories(movie.getCategories())
+                .trailerKey(movie.getTrailerKey())
                 .build();
     }
 }

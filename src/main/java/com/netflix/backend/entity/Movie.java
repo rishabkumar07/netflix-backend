@@ -53,6 +53,9 @@ public class Movie {
     @Column(name = "category")
     private Set<String> categories;
 
+    @Column(name = "trailer_key")
+    private String trailerKey;
+
     @Column(name = "last_synced")
     private LocalDateTime lastSynced;
 }

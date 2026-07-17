@@ -34,6 +34,9 @@ app:
     secret: ${JWT_SECRET}
     expiration: 86400000  # 24 hours in ms
 
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+
   tmdb:
     api-key: ${TMDB_API_KEY}
     base-url: https://api.themoviedb.org/3

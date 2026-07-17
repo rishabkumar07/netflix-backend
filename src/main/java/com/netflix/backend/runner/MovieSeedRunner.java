@@ -75,6 +75,7 @@ public class MovieSeedRunner implements CommandLineRunner {
                 .voteCount(entry.getVoteCount())
                 .popularity(entry.getPopularity())
                 .genreIds(entry.getGenreIds())
+                .trailerKey(entry.getTrailerKey())
                 .categories(new HashSet<>())
                 .lastSynced(LocalDateTime.now())
                 .build();
@@ -108,5 +109,7 @@ public class MovieSeedRunner implements CommandLineRunner {
         private BigDecimal popularity;
         @JsonProperty("genre_ids")
         private List<Integer> genreIds;
+        @JsonProperty("trailer_key")
+        private String trailerKey;
     }
 }

@@ -3,7 +3,9 @@ package com.netflix.backend.service;
 import com.netflix.backend.dto.request.LoginRequest;
 import com.netflix.backend.dto.request.RegisterRequest;
 import com.netflix.backend.dto.response.AuthResponse;
+import com.netflix.backend.dto.response.UserProfileDTO;
 import com.netflix.backend.entity.User;
+import com.netflix.backend.exception.ResourceNotFoundException;
 import com.netflix.backend.repository.UserRepository;
 import com.netflix.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +55,35 @@ public class AuthService {
 
         log.info("User logged in: {}", req.getEmail());
         return buildAuthResponse(user);
+    }
+
+    @Transactional
+    public AuthResponse guestLogin() {
+        String guestEmail = "guest_" + UUID.randomUUID() + "@netflix.local";
+        String randomPassword = UUID.randomUUID().toString();  // never handed back to the client
+
+        User guest = User.builder()
+                .email(guestEmail)
+                .password(passwordEncoder.encode(randomPassword))
+                .displayName("Guest")
+                .build();
+
+        userRepository.save(guest);
+        log.info("Created guest account: {}", guestEmail);
+
+        return buildAuthResponse(guest);
+    }
+
+    @Transactional(readOnly = true)
+    public UserProfileDTO getCurrentUser(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + email));
+
+        return UserProfileDTO.builder()
+                .email(user.getEmail())
+                .displayName(user.getDisplayName())
+                .photoUrl(user.getPhotoUrl())
+                .build();
     }
 
     private AuthResponse buildAuthResponse(User user) {
