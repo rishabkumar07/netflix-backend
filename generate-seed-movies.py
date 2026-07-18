@@ -1,7 +1,7 @@
 import urllib.request
 import json
 
-API_KEY = "PASTE_YOUR_TMDB_READ_ACCESS_TOKEN_HERE"
+API_KEY = "your_api_key_goes_here"
 BASE_URL = "https://api.themoviedb.org/3"
 PAGES = 3
 
@@ -18,9 +18,11 @@ def get_trailer_key(movie_id):
     try:
         with urllib.request.urlopen(req) as response:
             data = json.loads(response.read())
-            for video in data.get("results", []):
+            results = data.get("results", [])
+            for video in results:
                 if video.get("type") == "Trailer":
                     return video.get("key")
+            return results[0].get("key") if results else None
     except Exception as e:
         print(f"  No trailer for movie {movie_id}: {e}")
     return None
@@ -34,8 +36,9 @@ for category, endpoint in CATEGORIES.items():
         req = urllib.request.Request(url, headers={"Authorization": f"Bearer {API_KEY}"})
         with urllib.request.urlopen(req) as response:
             data = json.loads(response.read())
-            movies.extend(data["results"])
-        print(f"Fetched {category} page {page} ({len(data['results'])} movies)")
+            page_movies = [m for m in data["results"] if not m.get("adult")]
+            movies.extend(page_movies)
+        print(f"Fetched {category} page {page} ({len(page_movies)} movies)")
     result[category] = movies
     print(f"  -> {category} total: {len(movies)} movies\n")
 

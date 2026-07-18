@@ -1,9 +1,11 @@
 package com.netflix.backend.controller;
 
 import com.netflix.backend.dto.response.MovieDTO;
+import com.netflix.backend.dto.response.MovieSearchResultDTO;
 import com.netflix.backend.dto.response.PageResponse;
 import com.netflix.backend.service.ImageProxyService;
 import com.netflix.backend.service.MovieService;
+import com.netflix.backend.service.TmdbSearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ public class MovieController {
 
     private final MovieService movieService;
     private final ImageProxyService imageProxyService;
+    private final TmdbSearchService tmdbSearchService;
 
     @GetMapping("/now-playing")
     public ResponseEntity<PageResponse<MovieDTO>> getNowPlaying(
@@ -56,6 +59,11 @@ public class MovieController {
     @GetMapping("/image")
     public ResponseEntity<byte[]> getImage(@RequestParam String path) {
         return imageProxyService.fetchImage(path);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<MovieSearchResultDTO>> search(@RequestParam String title) {
+        return ResponseEntity.ok(tmdbSearchService.search(title));
     }
 
     /**

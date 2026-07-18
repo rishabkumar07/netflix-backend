@@ -99,6 +99,7 @@ public class MovieSyncScheduler {
             for (JsonNode node : results) {
                 TmdbMovieEntry entry = objectMapper.treeToValue(node, TmdbMovieEntry.class);
                 if (entry.getId() == null) continue;
+                if (Boolean.TRUE.equals(entry.getAdult())) continue;
 
                 Movie movie = movieMap.computeIfAbsent(entry.getId(), id -> toEntity(entry));
                 movie.getCategories().add(category);
@@ -118,12 +119,20 @@ public class MovieSyncScheduler {
                 ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
 
                 JsonNode results = objectMapper.readTree(response.getBody()).get("results");
+                String trailerKey = null;
+                String fallbackKey = null;
+
                 for (JsonNode video : results) {
+                    if (fallbackKey == null) {
+                        fallbackKey = video.path("key").asText();
+                    }
                     if ("Trailer".equals(video.path("type").asText())) {
-                        movie.setTrailerKey(video.path("key").asText());
+                        trailerKey = video.path("key").asText();
                         break;
                     }
                 }
+
+                movie.setTrailerKey(trailerKey != null ? trailerKey : fallbackKey);
             } catch (Exception e) {
                 log.debug("No trailer found for movie {}: {}", movie.getId(), e.getMessage());
                 // leave trailerKey null — one movie's missing trailer doesn't abort the sync
@@ -163,6 +172,7 @@ public class MovieSyncScheduler {
         private Integer id;
         private String title;
         private String overview;
+        private Boolean adult;
         @JsonProperty("poster_path")
         private String posterPath;
         @JsonProperty("backdrop_path")
